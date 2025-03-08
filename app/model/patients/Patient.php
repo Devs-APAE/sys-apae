@@ -58,6 +58,35 @@ class Patient extends TRecord
     }
 
 
+    /**
+     * Reset aggregates
+     */
+    public function clearParts()
+    {
+        PatientDisability::where('patient_id', '=', $this->id)->delete();
+    }
+
+
+    /**
+     * Add a Disability to the Patient
+     * @param $object Instance of Disability
+     */
+    public function addPatientDisability(Disability $disability)
+    {
+        $object = new PatientDisability;
+        $object->disability_id = $disability->id;
+        $object->patient_id = $this->id;
+        $object->store();
+    }
+
+    /**
+     * Return the patient' Disabilities
+     * @return Collection of Disability
+     */
+    public function getPatientDisabilities()
+    {
+        return parent::loadAggregate('Disability', 'PatientDisability', 'patient_id', 'disability_id', $this->id);
+    }
 
 
 }
