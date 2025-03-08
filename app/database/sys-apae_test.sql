@@ -602,6 +602,8 @@ CREATE TABLE IF NOT EXISTS `sysapae`.`professionals` (
   `Name` VARCHAR(45) NOT NULL,
   `license` VARCHAR(45) NOT NULL,
   `contact` VARCHAR(45) NOT NULL,
+  `created_at` DATETIME NOT NULL,
+  `updated_at` DATETIME NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -658,6 +660,8 @@ CREATE TABLE IF NOT EXISTS `sysapae`.`appointments` (
   `patients_idpatients` INT NOT NULL,
   `appointment_date` DATE NOT NULL,
   `notes` VARCHAR(100) NOT NULL,
+  `created_at` DATETIME NOT NULL,
+  `updated_at` DATETIME NOT NULL,
   PRIMARY KEY (`id`, `professionals_idprofessionals`, `appointment_type_idappointment_type`, `patients_idpatients`),
   INDEX `fk_appointments_professionals1_idx` (`professionals_idprofessionals` ASC) VISIBLE,
   INDEX `fk_appointments_appointment_type1_idx` (`appointment_type_idappointment_type` ASC) VISIBLE,
