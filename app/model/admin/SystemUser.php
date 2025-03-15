@@ -583,4 +583,52 @@ class SystemUser extends TRecord
         }
         return $collection;
     }
+
+
+    /**
+     * Check if the user has a specific role
+     * @author  Marcos David Souza Ramos
+     */
+    public function checkInRole( $id )
+    {
+
+        $roleids = $this->getSystemUserRoleIds();       
+        return in_array($id, $roleids);
+    }
+
+    public static function isAdmin(): bool
+    {
+        return in_array(1, TSession::getValue('usergroupids'));
+    }
+
+    public static function id()
+    {
+        return TSession::getValue('userid');
+    }
+
+    public static function unitId()
+    {
+        return TSession::getValue('userunitid');
+    }
+
+    
+
+    public static function current()
+    {
+        try {
+            
+            TTransaction::open('app');
+
+            $user = SystemUser::find(TSession::getValue('userid'));
+
+            TTransaction::close();
+
+            return $user;
+
+        } catch (Exception $e) {
+            new TMessage('error', $e->getMessage());
+            TTransaction::rollback();
+        }
+    }
+
 }
