@@ -7,7 +7,7 @@
 class PatientForm extends TPage
 {
     protected $form;
-    private $category_list;
+    private $disability_list;
     
     /**
      * Form constructor
@@ -18,7 +18,7 @@ class PatientForm extends TPage
         parent::__construct();      
         
         // creates the form
-        $this->form = new BootstrapFormBuilder('form_Person');
+        $this->form = new BootstrapFormBuilder('form_Patient');
         $this->form->setFormTitle('FORMULÁRIO DE PACIENTE');
         $this->form->setFieldSizes('100%');
         
@@ -26,16 +26,13 @@ class PatientForm extends TPage
         $id = new THidden('id');
 
 
-        /*$this->category_list = new TDBCheckGroup('category_list','app','Category','id','title');
-        $this->category_list->setLayout('horizontal');
-        if ($this->category_list->getLabels())
-        {
-            foreach ($this->category_list->getLabels() as $label)
-            {
-                $label->setSize(220);
+        $this->disability_list = new TDBCheckGroup('disability_list','app','Disability','id','name');
+        $this->disability_list->setLayout('horizontal');
+        if ($this->disability_list->getLabels()){
+            foreach ($this->disability_list->getLabels() as $label){
+                $label->setSize(160);
             }
-        }*/
-
+        }
 
         $sex_id = new TDBCombo('sex_id','app','Sex','id','name');
         $sex_id->addValidation('Sexo', new TRequiredValidator());
@@ -49,7 +46,6 @@ class PatientForm extends TPage
         $birth->setDatabaseMask("yyyy-mm-dd"); 
         $birth->placeholder = "dd/mm/aaaa";
         $birth->addValidation('Nascimento', new TRequiredValidator());
-
 
         $cpf = new TEntry('cpf');
         $cpf->setMask('999.999.999-99', true);
@@ -136,7 +132,12 @@ class PatientForm extends TPage
             [ new TLabel('E-mail '), $email ],
         );
         $row->layout = ['col-sm-6', 'col-sm-3', 'col-sm-3'];
-       
+
+        $this->form->addFields([new TFormSeparator('<br> Deficiências')]); 
+
+        $row = $this->form->addFields([$this->disability_list]);
+
+    
         $this->form->addFields([new TFormSeparator('<br> Endereço')]);         
 
         $row = $this->form->addFields(
@@ -156,7 +157,6 @@ class PatientForm extends TPage
 
         $this->form->addFields( [ new TLabel('Referência'),  $referencia ] );
 
-
         $this->form->addFields([new TFormSeparator('Observações')]); 
 
         $row = $this->form->addFields(
@@ -164,8 +164,7 @@ class PatientForm extends TPage
         );
         $row->layout = ['col-sm-12'];
 
-      
-
+    
         // create the form actions
         $btn = $this->form->addActionLink('Voltar', new TAction(['PatientList', 'onReload']), 'fa:arrow-alt-circle-left');
         $btn->class = 'btn btn-sm btn-default ';
@@ -176,7 +175,6 @@ class PatientForm extends TPage
         $btn = $this->form->addAction('SALVAR', new TAction([$this, 'onSave']), 'fa:save');
         $btn->class = 'btn btn-sm btn-primary right';
         
-
         // vertical box container
         $container = new TVBox;
         $container->style = 'width: 100%';
@@ -203,23 +201,16 @@ class PatientForm extends TPage
             $object = new Patient;
             $object->fromArray( (array) $data);
 
-            //$validator = new TEmailValidator;
-            //$validator->validate('E-mail', $data->email);
-
             $object->store(); 
 
-            //var_dump($data->category_list);
-            /*CategoryPerson::where('person_id', '=', $object->id)->delete();
-            if( !empty($data->category_list) ){
-                foreach( $data->category_list as $category_id )
+            PatientDisability::where('patient_id', '=', $object->id)->delete();
+            if( !empty($data->disability_list) ){
+                foreach( $data->disability_list as $disability_id )
                 {
-                    $object->addCategory( new Category($category_id) );
+                    $object->addPatientDisability( new Disability($disability_id) );
                 }
-            }else{
-                throw new Exception("<h5>Informe a categoria desta pessoal!</h5><spam>Cliente, Fornecedor e/ou Funcionário.</spam>");
-            }*/
+            }
 
-            
             TTransaction::close(); 
             
             new TMessage('info', '<h5>Cadastro de Paciente salvo com sucesso!</h5>', 
@@ -248,18 +239,17 @@ class PatientForm extends TPage
                 TTransaction::open('app');
 
                 $object = new Patient($key);
-                //$this->form->setData($object);
 
-                /*$categories = [];                
-                if( $categories_db = $object->getCategory() )
+                $array = [];                
+                if( $disabilities = $object->getPatientDisabilities() )
                 {
-                    foreach( $categories_db as $category )
+                    foreach( $disabilities as $disability )
                     {
-                        $categories[] = $category->id;
+                        $array[] = $disability->id;
                     }
                 }
                 
-                $object->category_list = $categories;*/
+                $object->disability_list = $array;
 
                 $this->form->setData($object);
                 TTransaction::close();                
