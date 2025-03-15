@@ -20,6 +20,7 @@ class PatientDisability extends TRecord
         parent::addAttribute('disability_id');
     }
 
+    
 
 
 }
