@@ -11,6 +11,7 @@ class Appointment extends TRecord
     
     private $appointment_type;
     private $patient;
+    private $professional;
     
     /**
      * Constructor method
@@ -22,7 +23,6 @@ class Appointment extends TRecord
         parent::addAttribute('patient_id');
         parent::addAttribute('name');
     }
-
 
     public function set_appointment_type(AppointmentType $object)
     {
@@ -52,6 +52,25 @@ class Appointment extends TRecord
 
         return $this->patient;
     }
+
+    
+    #pv
+    public function set_professional(Professional $object)
+    {
+        $this->professional = $object;
+        $this->professional_id = $object->id;
+    }
+
+    public function get_professional()
+    {
+        if (empty($this->professional))
+            $this->professional = new Professional($this->professional_id);
+
+        return $this->professional;
+    }
+
+
+
 
 
 
