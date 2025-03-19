@@ -20,8 +20,12 @@ class Appointment extends TRecord
     {
         parent::__construct($id, $callObjectLoad);
         parent::addAttribute('appointment_type_id');
+        parent::addAttribute('professional_id');
         parent::addAttribute('patient_id');
-        parent::addAttribute('name');
+        parent::addAttribute('appointment_date');
+        parent::addAttribute('notes');
+        parent::addAttribute('created_at');
+        parent::addAttribute('updated_at');
     }
 
     public function set_appointment_type(AppointmentType $object)
