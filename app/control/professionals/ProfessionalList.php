@@ -22,12 +22,14 @@ class ProfessionalList extends TPage
         $this->form->setFieldSizes('100%');
         
         $name = new TEntry('name');
-        $name->placeholder = "Nome";
+        $name->placeholder = "Nome do Profissional";
 
         $cpf = new TEntry('cpf');
-        $cpf->placeholder = "CPF";
+        $cpf->setMask('999.999.999-99', true);
+        $cpf->placeholder = "000.000.000-00";
 
         $crm = new TEntry('crm');
+        $crm->setMask('00000000-0/BR', true);
         $crm->placeholder = "CRM";
 
         $phone = new TEntry('phone');
@@ -63,45 +65,20 @@ class ProfessionalList extends TPage
         $observation = new TEntry('observation');
         $observation->placeholder = "Observação";
 
-        $active = new TEntry('active');
-        $active->placeholder = "Ativo(a)";
-
-        $created_at = new TEntry('created_at');
-        $created_at->placeholder = "Criado em";
-
-        $updated_at = new TEntry('updated_at');
-        $updated_at->placeholder = "Atualizado em";
+        $active = new TCombo('active');
+        $active->addItems([ 'Y' => 'Sim', 'N' => 'Não' ]);
+        $active->setDefaultOption("Selecione");
 
         $row = $this->form->addFields(
-            [new TLabel('Pesquisa'), $name, $cpf, $crm]
+            [new TLabel('Pesquisa'), $name],
+            [new TLabel('CPF'), $cpf],
+            [new TLabel('CRM'), $crm],
+            [new TLabel('Ativo'), $active],
+           // [ new TLabel('Formato'), $output_type ], 
         );
-        $row->layout = ['col-sm-4', 'col-sm-4', 'col-sm-4'];
+        $row->layout = ['col-sm-6', 'col-sm-2', 'col-sm-2', 'col-sm-2',];
 
-        $row = $this->form->addFields(
-            [new TLabel(''), $phone, $email, $zip_code]
-        );
-        $row->layout = ['col-sm-4', 'col-sm-4', 'col-sm-4'];
 
-        $row = $this->form->addFields(
-            [new TLabel(''), $address, $number, $complement]
-        );
-        $row->layout = ['col-sm-4', 'col-sm-4', 'col-sm-4'];
-
-        $row = $this->form->addFields(
-            [new TLabel(''), $district, $city, $uf]
-        );
-        $row->layout = ['col-sm-4', 'col-sm-4', 'col-sm-4'];
-
-        $row = $this->form->addFields(
-            [new TLabel(''), $reference, $observation, $active]
-        );
-        $row->layout = ['col-sm-4', 'col-sm-4', 'col-sm-4'];
-
-        $row = $this->form->addFields(
-            [new TLabel(''), $created_at, $updated_at]
-        );
-        $row->layout = ['col-sm-6', 'col-sm-6'];
-            
         $this->form->setData(TSession::getValue('ProfessionalList' . '_filter_data'));
 
         $btn = $this->form->addAction('Pesquisar', new TAction([$this, 'onSearch']), 'fa:search');
@@ -112,6 +89,11 @@ class ProfessionalList extends TPage
 
         $btn = $this->form->addActionLink(('Novo Profissional'), new TAction(['ProfessionalForm', 'onEdit']), 'fa:plus');
         $btn->class = 'btn btn-sm btn-primary right';
+
+        $this->datagrid = new BootstrapDatagridWrapper(new TDataGrid);
+        $this->datagrid->disableDefaultClick();
+        $this->datagrid->style = 'width: 100%';
+        $this->datagrid->datatable = 'true';
 
         $column_id = new TDataGridColumn('id', 'ID', 'center');
         $column_name = new TDataGridColumn('name', 'Nome', 'left');
@@ -148,17 +130,32 @@ class ProfessionalList extends TPage
         $this->datagrid->addColumn($column_uf);
         $this->datagrid->addColumn($column_reference);
         $this->datagrid->addColumn($column_observation);
-        $this->datagrid->addColumn($column_active);
         $this->datagrid->addColumn($column_created_at);
-        $this->datagrid->addColumn($column_updated_at);
+        $this->datagrid->addColumn($column_active);
 
         $column_id->setTransformer(function ($value, $object, $row) {
             $row->style = "vertical-align: middle;";
             return $value;
         });
 
+        $column_cpf->setTransformer(function ($value, $object, $row) {
+            return AppHelper::formatCpfCnpj($value); 
+        });
+
+        $column_phone->setTransformer(function ($value, $object, $row) {
+            return AppHelper::formatPhone($value); 
+        });
+
         $column_created_at->setTransformer(function ($value, $object, $row) {
-            return $value; 
+            return AppHelper::toDateBR($value); 
+        });
+
+        $column_active->setTransformer(function ($value, $object, $row) {
+            $div = new TElement('span');
+            $div->class = $value == 'Y' ? 'label label-success' : 'label label-danger';
+            $div->style = 'text-shadow:none; font-size:10px; white-space: nowrap;';
+            $div->add($value == 'Y' ? 'Sim' : 'Não');
+            return $div;
         });
 
         $action_edit = new TDataGridAction(['ProfessionalForm', 'onEdit']);
@@ -191,7 +188,7 @@ class ProfessionalList extends TPage
         TSession::setValue('ProfessionalList' . '_filter_data', null);
         TSession::setValue('ProfessionalList' . '_filters', null);
 
-        //AppHelper::toCleanForm($this->form);
+        AppHelper::toCleanForm($this->form);
 
         $this->onReload($param);
     }
@@ -206,54 +203,14 @@ class ProfessionalList extends TPage
             $filters[] = new TFilter('name', 'like', "%{$data->name}%");
         }
         if ($data->cpf) {
-            $filters[] = new TFilter('cpf', 'like', "%{$data->cpf}%");
+            $filters[] = new TFilter('cpf', '=', $data->cpf);
         }
         if ($data->crm) {
-            $filters[] = new TFilter('crm', 'like', "%{$data->crm}%");
-        }
-        if ($data->phone) {
-            $filters[] = new TFilter('phone', 'like', "%{$data->phone}%");
-        }
-        if ($data->email) {
-            $filters[] = new TFilter('email', 'like', "%{$data->email}%");
-        }
-        if ($data->zip_code) {
-            $filters[] = new TFilter('zip_code', 'like', "%{$data->zip_code}%");
-        }
-        if ($data->address) {
-            $filters[] = new TFilter('address', 'like', "%{$data->address}%");
-        }
-        if ($data->number) {
-            $filters[] = new TFilter('number', 'like', "%{$data->number}%");
-        }
-        if ($data->complement) {
-            $filters[] = new TFilter('complement', 'like', "%{$data->complement}%");
-        }
-        if ($data->district) {
-            $filters[] = new TFilter('district', 'like', "%{$data->district}%");
-        }
-        if ($data->city) {
-            $filters[] = new TFilter('city', 'like', "%{$data->city}%");
-        }
-        if ($data->uf) {
-            $filters[] = new TFilter('uf', 'like', "%{$data->uf}%");
-        }
-        if ($data->reference) {
-            $filters[] = new TFilter('reference', 'like', "%{$data->reference}%");
-        }
-        if ($data->observation) {
-            $filters[] = new TFilter('observation', 'like', "%{$data->observation}%");
+            $filters[] = new TFilter('crm', '=', $data->crm);
         }
         if ($data->active) {
-            $filters[] = new TFilter('active', 'like', "%{$data->active}%");
+            $filters[] = new TFilter('active', '=', $data->active);
         }
-        if ($data->created_at) {
-            $filters[] = new TFilter('created_at', 'like', "%{$data->created_at}%");
-        }
-        if ($data->updated_at) {
-            $filters[] = new TFilter('updated_at', 'like', "%{$data->updated_at}%");
-        }
-
         TSession::setValue('ProfessionalList' . '_filters', $filters);
         $this->onReload(['offset' => 0, 'first_page' => 1]);
     }
@@ -307,16 +264,28 @@ class ProfessionalList extends TPage
 
     public function displayColumnDelete($object)
     {
-        return true; 
+        $result = false;
+        try{
+            TTransaction::open('app'); 
+            
+            $user = new SystemUser(SystemUser::id()); 
+            $result = $user->checkInRole(1); //1 - Permissão de Excluir Registros
+            
+            TTransaction::close();
+            return $result;
+
+        }catch (Exception $e) {
+            return false;
+        }
     }
 
 
     public static function onDelete($param)
     {
-        $action = new TAction(['ProfessionalList', 'Delete']);
+        $action = new TAction(['PatientList', 'Delete']);
         $action->setParameters($param);
 
-        new TQuestion("<h5>Deseja excluir esse profissional?</h5>", $action);
+        new TQuestion("<h5>Confirma a exclusão deste profissional?</h5><p>Essa ação é irreversível e todos os dados do profissional serão removidos permanentemente.</p>", $action);
     }
 
     /**
@@ -328,6 +297,9 @@ class ProfessionalList extends TPage
             $key = $param['key'];
             TTransaction::open('app');
             $object = new Professional($key, FALSE);
+            
+            $object->clearParts();
+            
             $object->delete();
             TTransaction::close();
 
