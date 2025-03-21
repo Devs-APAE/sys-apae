@@ -38,7 +38,7 @@ class DisabilityList extends TPage
         $btn = $this->form->addAction('Limpar', new TAction([$this, 'onClear']), 'fa:eraser');
         $btn->class = 'btn btn-sm btn-default';
 
-        $btn = $this->form->addActionLink(('Novo Deficiência'), new TAction(['DisabilityForm', 'onEdit']), 'fa:plus');
+        $btn = $this->form->addActionLink(('Nova Deficiência'), new TAction(['DisabilityForm', 'onEdit']), 'fa:plus');
         $btn->class = 'btn btn-sm btn-primary right';
 
 

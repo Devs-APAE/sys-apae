@@ -8,7 +8,7 @@ class DisabilityForm extends TWindow
     {
         parent::__construct();
         parent::setSize(0.6, null);
-        parent::setTitle('Disability Form');
+        parent::setTitle('Formulário de Deficiências');
         parent::disableEscape();
 
         $this->form = new BootstrapFormBuilder('form_Disability');
@@ -34,13 +34,13 @@ class DisabilityForm extends TWindow
 
         $row = $this->form->addFields(
             [new TLabel('CID *'), $cid],
-            [new TLabel('Name *'), $name]
+            [new TLabel('Nome *'), $name]
         );
         $row->layout = ['col-sm-6', 'col-sm-6'];
 
-        $this->form->addActionLink('Back', new TAction(['DisabilityList', 'onReload']), 'fa:arrow-alt-circle-left')->class = 'btn btn-sm btn-default';
-        $this->form->addActionLink('Clear', new TAction([$this, 'onClear']), 'fa:eraser')->class = 'btn btn-sm btn-default';
-        $this->form->addAction('SAVE', new TAction([$this, 'onSave']), 'fa:save')->class = 'btn btn-sm btn-primary right';
+        $this->form->addActionLink('Voltar', new TAction(['DisabilityList', 'onReload']), 'fa:arrow-alt-circle-left')->class = 'btn btn-sm btn-default';
+        $this->form->addActionLink('Apagar', new TAction([$this, 'onClear']), 'fa:eraser')->class = 'btn btn-sm btn-default';
+        $this->form->addAction('SALVAR', new TAction([$this, 'onSave']), 'fa:save')->class = 'btn btn-sm btn-primary right';
 
         $container = new TVBox;
         $container->style = 'width: 100%';
@@ -63,7 +63,7 @@ class DisabilityForm extends TWindow
             TTransaction::close(); 
             
             TApplication::loadPage("DisabilityList", 'onReload'); 
-            new TMessage('info', "<h5>Disability saved successfully!</h5>");
+            new TMessage('info', "<h5>Deficiência salva com Sucesso!</h5>");
 
         } catch (Exception $e) {
             new TMessage('error', $e->getMessage());
