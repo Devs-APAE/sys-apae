@@ -1,217 +1,251 @@
 <?php
 
-class ProfessionalForm extends TWindow
+/**
+ * ProfessionalForm Form
+ * @author  Marcos David Souza Ramos
+ */
+class ProfessionalForm extends TPage
 {
     protected $form;
-
-    public function __construct($param)
-    {  
-        parent::__construct();
-        parent::setSize(0.6, null);
-        parent::setTitle('Professional Form');
-        parent::disableEscape();
-
-        $this->form = new BootstrapFormBuilder('form_Professional');
+    private $category_list;
+    
+    /**
+     * Form constructor
+     * @param $param Request
+     */
+    public function __construct( $param )
+    {
+        parent::__construct();      
+        
+        // creates the form
+        $this->form = new BootstrapFormBuilder('form_Person');
+        $this->form->setFormTitle('FORMULÁRIO DE PROFISSIONAL');
         $this->form->setFieldSizes('100%');
-
-        TPage::register_css('css_form_Professional', '
-            div.panel[form="form_Professional"] {
-                margin-bottom: 0px !important;
-            }
-        ');
-
+        
+        // create the form fields
         $id = new THidden('id');
 
+
+        /*$this->category_list = new TDBCheckGroup('category_list','app','Category','id','title');
+        $this->category_list->setLayout('horizontal');
+        if ($this->category_list->getLabels())
+        {
+            foreach ($this->category_list->getLabels() as $label)
+            {
+                $label->setSize(220);
+            }
+        }*/
+
+
         $name = new TEntry('name');
-        $name->setMaxLength(100);
         $name->forceUpperCase();
         $name->addValidation('Name', new TRequiredValidator);
 
         $cpf = new TEntry('cpf');
-        $cpf->setMaxLength(100);
-        $cpf->forceUpperCase();
-        $cpf->addValidation('CPF', new TRequiredValidator);
+        $cpf->setMask('999.999.999-99', true);
+        $cpf->addValidation('CPF', new TCPFValidator());
 
         $crm = new TEntry('crm');
-        $crm->setMaxLength(100);
-        $crm->forceUpperCase();
-        $crm->addValidation('CRM', new TRequiredValidator);
+        $crm->setMask('00000000-0/BR', True);
+        $crm->addValidation('CRM', new TRequiredValidator());
 
         $phone = new TEntry('phone');
-        $phone->setMaxLength(100);
-        $phone->forceUpperCase();
+        $phone->setMask('(99) 99999-9999', true);
+        $phone->setSize('100%');
         $phone->addValidation('Phone', new TRequiredValidator);
 
         $email = new TEntry('email');
-        $email->setMaxLength(100);
-        $email->forceUpperCase();
-        $email->addValidation('Email', new TRequiredValidator);
+        $email->setSize('100%');
 
         $zip_code = new TEntry('zip_code');
-        $zip_code->setMaxLength(100);
-        $zip_code->forceUpperCase();
-        $zip_code->addValidation('Zip_code', new TRequiredValidator);
+        $zip_code->setMask("99.999-999", true);
+        $zip_code->addValidation('CEP', new TRequiredValidator());
 
         $address = new TEntry('address');
-        $address->setMaxLength(100);
-        $address->forceUpperCase();
         $address->addValidation('Address', new TRequiredValidator);
 
         $number = new TEntry('number');
-        $number->setMaxLength(100);
-        $number->forceUpperCase();
-        $number->addValidation('Number', new TRequiredValidator);
-
+        
         $complement = new TEntry('complement');
-        $complement->setMaxLength(100);
-        $complement->forceUpperCase();
-        $complement->addValidation('Complement', new TRequiredValidator);
 
         $district = new TEntry('district');
-        $district->setMaxLength(100);
-        $district->forceUpperCase();
         $district->addValidation('District', new TRequiredValidator);
 
         $city = new TEntry('city');
-        $city->setMaxLength(100);
-        $city->forceUpperCase();
         $city->addValidation('City', new TRequiredValidator);
 
-        $uf = new TEntry('uf');
-        $uf->setMaxLength(100);
-        $uf->forceUpperCase();
-        $uf->addValidation('UF', new TRequiredValidator);
+        $uf = new TCombo('uf');
+        $uf->setDefaultOption('Selecione');
+        $uf->addItems(Professional::list_uf());
+        $uf->addValidation('UF', new TRequiredValidator());
 
-        $reference = new TEntry('reference');
-        $reference->setMaxLength(100);
-        $reference->forceUpperCase();
-        $reference->addValidation('Reference', new TRequiredValidator);
 
-        $observation = new TEntry('observation');
-        $observation->setMaxLength(100);
-        $observation->forceUpperCase();
-        $observation->addValidation('Observation', new TRequiredValidator);
+        $referencia = new TEntry('reference');
+    
+        $observation = new TText('observation');
+        $observation->placeholder = ' Digite aqui...';
 
-        $active = new TEntry('active');
-        $active->setMaxLength(100);
-        $active->forceUpperCase();
-        $active->addValidation('Active', new TRequiredValidator);
-
-        $created_at = new TEntry('created_at');
-        $created_at->setMaxLength(100);
-        $created_at->forceUpperCase();
-        $created_at->addValidation('created_at', new TRequiredValidator);
-
-        $updated_at = new TEntry('updated_at');
-        $updated_at->setMaxLength(100);
-        $updated_at->forceUpperCase();
-        $updated_at->addValidation('updated_at', new TRequiredValidator);
+        $active = new TRadioGroup('active');
+        $active->addItems(['Y'=>_t('Yes'),'N'=> _t('No')]);
+        $active->setLayout('horizontal');
+        $active->setUseButton();
+        $active->setValue('Y');
 
         // Adicionando campos ao formulário
-        $this->form->addFields([$id]);
+        $this->form->addFields( [ $id ] );
 
         $row = $this->form->addFields(
-            [new TLabel('Nome *'), $name],
-            [new TLabel('CPF *'), $cpf],
-            [new TLabel('CRM *'), $crm]
+            [ new TLabel('Nome *'), $name ],
+            [ new TLabel('CRM *'), $crm],
+            [ new TLabel('CPF *'), $cpf],
+            [ new TLabel('Ativo *'), $active ],
         );
-        $row->layout = ['col-sm-6', 'col-sm-3', 'col-sm-3'];
+        $row->layout = ['col-sm-6', 'col-sm-2', 'col-sm-2', 'col-sm-2',];
         
-        $row = $this->form->addFields(
-            [new TLabel('Telefone *'), $phone],
-            [new TLabel('Email *'), $email],
-            [new TLabel('CEP *'), $zip_code]
-        );
-        $row->layout = ['col-sm-6', 'col-sm-3', 'col-sm-3'];
+        $this->form->addFields([new TFormSeparator('<br> Contato')]); 
 
         $row = $this->form->addFields(
-            [new TLabel('Endereço *'), $address],
-            [new TLabel('Número *'), $number],
-            [new TLabel('Complemento *'), $complement]
+            [ new TLabel('Telefone *'), $phone ],
+            [ new TLabel('Email '), $email ],
         );
-        $row->layout = ['col-sm-6', 'col-sm-3', 'col-sm-3'];
+        $row->layout = ['col-sm-6', 'col-sm-6',];
+
+        $this->form->addFields([new TFormSeparator('<br> Endereço')]); 
 
         $row = $this->form->addFields(
-            [new TLabel('Bairro *'), $district],
-            [new TLabel('Cidade *'), $city],
-            [new TLabel('Estado *'), $uf]
+            [ new TLabel('Endereço *'), $address ],
+            [ new TLabel('Número '), $number ],
+            [ new TLabel('Complemento'), $complement ],
         );
-        $row->layout = ['col-sm-6', 'col-sm-3', 'col-sm-3'];
+        $row->layout = ['col-sm-6', 'col-sm-3', 'col-sm-3',];
 
         $row = $this->form->addFields(
-            [new TLabel('Ponto de Referência *'), $reference],
-            [new TLabel('Observação *'), $observation],
-            [new TLabel('Ativo(a) *'), $active]
+            [ new TLabel('Bairro *'), $district ],
+            [ new TLabel('Cidade *'), $city ],
+            [ new TLabel('Estado *'), $uf ],
+            [ new TLabel('CEP *'), $zip_code ],
         );
-        $row->layout = ['col-sm-6', 'col-sm-3', 'col-sm-3'];
+        $row->layout = ['col-sm-4', 'col-sm-4', 'col-sm-2','col-sm-2',];
+
+        $this->form->addFields( [ new TLabel('Referência'),  $referencia ] );
+
+
+        $this->form->addFields([new TFormSeparator('Observações')]); 
 
         $row = $this->form->addFields(
-            [new TLabel('Cadastro feito em *'), $created_at],
-            [new TLabel('Atualizado em *'), $updated_at],
+            [$observation ], 
         );
-        $row->layout = ['col-sm-6', 'col-sm-6'];
+        $row->layout = ['col-sm-12'];
 
-        $this->form->addActionLink('Clear', new TAction([$this, 'onClear']), 'fa:eraser')->class = 'btn btn-sm btn-default';
-        $this->form->addAction('SAVE', new TAction([$this, 'onSave']), 'fa:save')->class = 'btn btn-sm btn-primary right';
 
+        
+        // create the form actions
+        $btn = $this->form->addActionLink('Voltar', new TAction(['ProfessionalList', 'onReload']), 'fa:arrow-alt-circle-left');
+        $btn->class = 'btn btn-sm btn-default ';
+
+        $btn = $this->form->addActionLink( _t('Clear'), new TAction(array($this, 'onEdit')), 'fa:eraser');
+        $btn->class = 'btn btn-sm btn-default';
+
+        $btn = $this->form->addAction('SALVAR', new TAction([$this, 'onSave']), 'fa:save');
+        $btn->class = 'btn btn-sm btn-primary right';
+        
+
+        // vertical box container
         $container = new TVBox;
         $container->style = 'width: 100%';
         $container->add($this->form);
-
+        
         parent::add($container);
     }
+    
+    
 
-    public function onSave($param)
+    /**
+     * Save form data
+     * @param $param Request
+     */
+    public function onSave( $param )
     {
-        try {
-            TTransaction::open('app');
+        try
+        {
+            TTransaction::open('app'); 
+            
             $this->form->validate(); 
-            $data = $this->form->getData();
+            $data = $this->form->getData();   
+            
+            $object = new Professional;
+            $object->fromArray( (array) $data);
 
-            // Salvando o profissional
-            $object = new Professional;  // Alterado para Professional
-            $object->fromArray((array) $data);
-            $object->store();
+            //$validator = new TEmailValidator;
+            //$validator->validate('E-mail', $data->email);
 
-            // Aqui, se houver especialidades, associá-las ao profissional
-            if (isset($param['specialities']) && is_array($param['specialities'])) {
-                foreach ($param['specialities'] as $speciality_id) {
-                    $speciality = new Speciality($speciality_id); // Criar o objeto Speciality
-                    $object->addProfessionalSpeciality($speciality);  // Adicionar especialidade
+            $object->store(); 
+
+            //var_dump($data->category_list);
+            /*CategoryPerson::where('person_id', '=', $object->id)->delete();
+            if( !empty($data->category_list) ){
+                foreach( $data->category_list as $category_id )
+                {
+                    $object->addCategory( new Category($category_id) );
                 }
-            }
+            }else{
+                throw new Exception("<h5>Informe a categoria desta pessoal!</h5><spam>Cliente, Fornecedor e/ou Funcionário.</spam>");
+            }*/
 
-            TTransaction::close();
+            
+            TTransaction::close(); 
+            
+            new TMessage('info', '<h5>Cadastro de Profissional salvo com sucesso!</h5>', 
+            new TAction(['ProfessionalList', 'onReload']));
+        
+        }catch (Exception $e) {
+            new TMessage('error', $e->getMessage()); 
 
-            new TMessage('info', 'Professional saved successfully!');
-
-        } catch (Exception $e) {
-            new TMessage('error', $e->getMessage());
-            $this->form->setData($this->form->getData());
+            $data = $this->form->getData();
+            $this->form->setData($data);
             TTransaction::rollback();
         }
     }
-
-    public function onClear($param)
+    
+    /**
+     * Load object to form data
+     * @param $param Request
+     */
+    public function onEdit( $param )
     {
-        $this->form->clear(true);
-    }
-
-    public function onEdit($param)
-    {
-        try {
-            if (isset($param['key'])) {
+        try
+        {
+            if (isset($param['key']))
+            {
                 $key = $param['key'];
-                TTransaction::open('app'); 
+                TTransaction::open('app');
+
                 $object = new Professional($key);
+                //$this->form->setData($object);
+
+                /*$categories = [];                
+                if( $categories_db = $object->getCategory() )
+                {
+                    foreach( $categories_db as $category )
+                    {
+                        $categories[] = $category->id;
+                    }
+                }
+                
+                $object->category_list = $categories;*/
+
                 $this->form->setData($object);
-                TTransaction::close();
-            } else {
-                $this->form->clear(true);
+                TTransaction::close();                
+
+            }else{
+                $this->form->clear(TRUE);
             }
-        } catch (Exception $e) {
+
+        } catch (Exception $e){
             new TMessage('error', $e->getMessage());
             TTransaction::rollback();
         }
     }
+
+    
 }
