@@ -121,7 +121,6 @@ class PatientList extends TPage
         $action_delete->setDisplayCondition(array($this, 'displayColumnDelete'));
         $this->datagrid->addAction($action_delete, _t('Delete'), 'far:trash-alt red');
 
-
         $this->datagrid->createModel();
 
         $this->pageNavigation = new TPageNavigation;
@@ -142,7 +141,6 @@ class PatientList extends TPage
         TSession::setValue('PatientList' . '_filters', null);
 
         AppHelper::toCleanForm($this->form);
-
         $this->onReload($param);
     }
 
