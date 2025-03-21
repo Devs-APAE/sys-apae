@@ -141,6 +141,7 @@ class PatientList extends TPage
         TSession::setValue('PatientList' . '_filters', null);
 
         AppHelper::toCleanForm($this->form);
+
         $this->onReload($param);
     }
 
