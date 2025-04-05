@@ -20,13 +20,14 @@ class AppointmentForm extends TPage
 
         // Cria o formulário
         $this->form = new BootstrapFormBuilder('form_Appointment');
-        $this->form->setFormTitle('Atendimento');
+        $this->form->setFormTitle('FORMULÁRIO DE ATENDIMENTO');
         $this->form->setFieldSizes('100%');
 
         // Campos do formulário
         $id = new THidden('id');
 
         $appointment_type_id = new TDBCombo('appointment_type_id', 'app', 'AppointmentType', 'id', 'name');
+        $appointment_type_id->setDefaultOption('Selecione');
         $appointment_type_id->addValidation('Tipo de Atendimento', new TRequiredValidator());
 
         $professional_id = new TDBUniqueSearch('professional_id', 'app', 'Professional', 'id', 'name');
@@ -54,15 +55,15 @@ class AppointmentForm extends TPage
         
         $row = $this->form->addFields(
             [new TLabel('Paciente *'), $patient_id],
-            [new TLabel('Tipo de Atendimento *'), $appointment_type_id]
         );
-        $row->layout = ['col-sm-8', 'col-sm-4'];
+        $row->layout = ['col-sm-12'];
         
         $row = $this->form->addFields(
+            [new TLabel('Data do Atendimento *'), $appointment_date],
+            [new TLabel('Tipo de Atendimento *'), $appointment_type_id],
             [new TLabel('Profissional *'), $professional_id],
-            [new TLabel('Data do Atendimento *'), $appointment_date]
         );
-        $row->layout = ['col-sm-6', 'col-sm-6'];
+        $row->layout = ['col-sm-4', 'col-sm-4', 'col-sm-4'];
         
         $row = $this->form->addFields(
             [new TLabel('Observação'), $notes]

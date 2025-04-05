@@ -44,11 +44,12 @@ class PatientForm extends TPage
         $birth = new TDate('birth');
         $birth->setMask("dd/mm/yyyy");
         $birth->setDatabaseMask("yyyy-mm-dd"); 
-        $birth->placeholder = "dd/mm/aaaa";
+        $birth->placeholder = "DD/MM/AAAA";
         $birth->addValidation('Nascimento', new TRequiredValidator());
 
         $cpf = new TEntry('cpf');
         $cpf->setMask('999.999.999-99', true);
+        $cpf->placeholder = "000.000.000-00";
         $cpf->addValidation('CPF', new TCPFValidator());
 
         $rg = new TEntry('rg');
@@ -65,6 +66,7 @@ class PatientForm extends TPage
 
         $phone = new TEntry('phone');
         $phone->setMask('(99)99999-9999', true);
+        $phone->placeholder = "(00)0000-0000";
         $phone->setSize('100%');
         $phone->addValidation('Celular', new TRequiredValidator());
 
@@ -74,6 +76,7 @@ class PatientForm extends TPage
 
         $zip_code = new TEntry('zip_code');
         $zip_code->setMask("99.999-999", true);
+        $zip_code->placeholder = "00.000-00";
         $zip_code->addValidation('CEP', new TRequiredValidator());
 
         $address = new TEntry('address');
