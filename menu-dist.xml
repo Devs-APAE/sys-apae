@@ -1,4 +1,25 @@
 <menu>
+
+    <menuitem label='Atendimentos'>
+        <icon>fa:calendar-alt fa-fw</icon>
+        <action>AppointmentList</action>
+    </menuitem>
+
+    <menuitem label='Pacientes'>
+        <icon>fas:users fa-fw</icon>
+        <action>PatientList</action>
+    </menuitem>
+
+    <menuitem label='Profissionais'>
+        <icon>fas:user-tie fa-fw</icon>
+        <action>ProfessionalList</action>
+    </menuitem>
+
+    <menuitem label='Deficiencias'>
+        <icon>fa:th-list fa-fw</icon>
+        <action>DisabilityList</action>
+    </menuitem>
+
     <menuitem label='_t{Administration}'>
         <icon>fas:sliders fa-fw</icon>
         <menu>
@@ -80,23 +101,6 @@
                   <icon>fas:code fa-fw</icon>
                   <action>SystemSessionVarsView</action>
               </menuitem>
-        </menu>
-    </menuitem>
-        
-    <menuitem label='Common pages'>
-        <menu>
-            <menuitem label='Common page 1'>
-                <icon></icon>
-                <action>CommonPage</action>
-            </menuitem>
-            <menuitem label='Common page 2'>
-                <icon></icon>
-                <action>CommonPage</action>
-            </menuitem>
-            <menuitem label='Common page 3'>
-                <icon></icon>
-                <action>CommonPage</action>
-            </menuitem>
         </menu>
     </menuitem>
     
