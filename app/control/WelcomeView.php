@@ -23,8 +23,8 @@ class WelcomeView extends TPage
         
         $ini = AdiantiApplicationConfig::get();
         
-        $replaces = ['title' => _t('Welcome'),
-                     'content' => $ini['general']['welcome_message'] ?? ''];
+        $replaces = ['title' => 'Bem-vindo(a) ao sistema da APAE!',
+                     'content' => 'Facilitando o cuidado com organização, inclusão e respeito. 💙'];
         
         // replace the main section variables
         $this->html->enableSection('main', $replaces);
