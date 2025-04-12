@@ -1,8 +1,5 @@
 <?php
 
-use Adianti\Database\TTransaction;
-use Adianti\Registry\TSession;
-use Adianti\Widget\Datagrid\TDataGridColumn;
 
 /**
  * AppointmentList Listing
