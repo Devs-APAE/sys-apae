@@ -45,12 +45,12 @@ class LoginForm extends TPage
         $password->disableAutoComplete();
         $login->setSize('100%');
         $password->setSize('100%');
-        $login->placeholder = _t('User');
+        $login->placeholder = 'E-mail';
         $password->placeholder = _t('Password');
         $password->disableToggleVisibility();
         $login->autofocus = 'autofocus';
         
-        $this->form->addRowField(_t('Login'), $login, true );
+        $this->form->addRowField('E-mail', $login, true );
         $this->form->addRowField(_t('Password'), $password, true );
         
         if (!empty($ini['general']['multiunit']) and $ini['general']['multiunit'] == '1')
