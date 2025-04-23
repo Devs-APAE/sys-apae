@@ -20,15 +20,16 @@ class DisabilityList extends TPage
         $this->form->setFieldSizes('100%');
 
         $cid = new TEntry('cid');
-        $cid->placeholder = "CID";
+        $cid->placeholder = "";
 
         $name = new TEntry('name');
-        $name->placeholder = "Nome";
+        $name->placeholder = "Nome da Deficiência";
 
         $row = $this->form->addFields(
-            [new TLabel('Pesquisa'), $cid, $name]
+            [new TLabel('Pesquisa'), $name],
+            [new TLabel('CID'), $cid]
         );
-        $row->layout = ['col-sm-4', 'col-sm-4', 'col-sm-4'];
+        $row->layout = ['col-sm-6', 'col-sm-4', 'col-sm-2'];
 
         $this->form->setData(TSession::getValue('DisabilityList' . '_filter_data'));
 
@@ -168,7 +169,19 @@ class DisabilityList extends TPage
 
     public function displayColumnDelete($object)
     {
-        return true; 
+        $result = false;
+        try{
+            TTransaction::open('app'); 
+            
+            $user = new SystemUser(SystemUser::id());
+            $result = $user->checkInRole(1); //1 - Permissão de Excluir Registros
+
+            TTransaction::close();
+            return $result;
+
+        }catch (Exception $e) {
+            return false;
+        }
     }
 
 

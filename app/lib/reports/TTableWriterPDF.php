@@ -44,7 +44,6 @@ class TTableWriterPDF implements ITableWriter
         setlocale(LC_ALL, 'POSIX');
         // cria o objeto FPDF
         $this->pdf = new FPDF($orientation, 'pt', $format);
-        $this->pdf->Open();
         $this->pdf->AddPage();
     }
     

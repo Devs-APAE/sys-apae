@@ -7,7 +7,7 @@ class DisabilityForm extends TWindow
     public function __construct($param)
     {
         parent::__construct();
-        parent::setSize(0.6, null);
+        parent::setSize(0.5, null);
         parent::setTitle('Formulário de Deficiências');
         parent::disableEscape();
 
@@ -22,21 +22,19 @@ class DisabilityForm extends TWindow
 
         $id = new THidden('id');
         $cid = new TEntry('cid');
-        $cid->setMaxLength(100);
         $cid->addValidation('CID', new TRequiredValidator);
 
         $name = new TEntry('name');
-        $name->setMaxLength(100);
         $name->forceUpperCase();
         $name->addValidation('Name', new TRequiredValidator);
 
         $this->form->addFields([$id]);
 
         $row = $this->form->addFields(
+            [new TLabel('Nome da Deficiência *'), $name],
             [new TLabel('CID *'), $cid],
-            [new TLabel('Nome *'), $name]
         );
-        $row->layout = ['col-sm-6', 'col-sm-6'];
+        $row->layout = ['col-sm-8', 'col-sm-4'];
 
         $this->form->addActionLink('Voltar', new TAction(['DisabilityList', 'onReload']), 'fa:arrow-alt-circle-left')->class = 'btn btn-sm btn-default';
         $this->form->addActionLink('Apagar', new TAction([$this, 'onClear']), 'fa:eraser')->class = 'btn btn-sm btn-default';
