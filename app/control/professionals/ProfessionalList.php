@@ -282,7 +282,7 @@ class ProfessionalList extends TPage
 
     public static function onDelete($param)
     {
-        $action = new TAction(['PatientList', 'Delete']);
+        $action = new TAction(['ProfessionalList', 'Delete']);
         $action->setParameters($param);
 
         new TQuestion("<h5>Confirma a exclusão deste profissional?</h5><p>Essa ação é irreversível e todos os dados do profissional serão removidos permanentemente.</p>", $action);
