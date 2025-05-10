@@ -1,7 +1,5 @@
 <?php
 
-use Adianti\Widget\Wrapper\TDBUniqueSearch;
-
 /**
  * AppointmentForm Form
  * @author Tony Sousa Lopes
@@ -23,7 +21,6 @@ class AppointmentForm extends TPage
         $this->form->setFormTitle('FORMULÁRIO DE ATENDIMENTO');
         $this->form->setFieldSizes('100%');
 
-        // Campos do formulário
         $id = new THidden('id');
 
         $appointment_type_id = new TDBCombo('appointment_type_id', 'app', 'AppointmentType', 'id', 'name');
@@ -31,8 +28,8 @@ class AppointmentForm extends TPage
         $appointment_type_id->addValidation('Tipo de Atendimento', new TRequiredValidator());
 
         $professional_id = new TDBUniqueSearch('professional_id', 'app', 'Professional', 'id', 'name');
-        $professional_id->setMinLength(1); // Carrega sugestões após 1 caractere digitado   
-        $professional_id->setMask('{name} ({cpf})');
+        $professional_id->setMinLength(1);  
+        $professional_id->setMask('{name} ({crm})');
         $professional_id->addValidation('Profissional', new TRequiredValidator());
         
         $patient_id = new TDBUniqueSearch('patient_id', 'app', 'Patient', 'id', 'name');
@@ -40,7 +37,6 @@ class AppointmentForm extends TPage
         $patient_id->setMask('{name} ({cpf})');
         $patient_id->addValidation('Paciente', new TRequiredValidator());
         
-
         $appointment_date = new TDate('appointment_date');
         $appointment_date->setMask('dd/mm/yyyy');
         $appointment_date->setDatabaseMask('yyyy-mm-dd');
@@ -49,8 +45,8 @@ class AppointmentForm extends TPage
 
         $notes = new TText('notes');
         $notes->placeholder = 'Observações sobre o atendimento';
+        $notes->addValidation('Observação', new TRequiredValidator());
 
-        // Adiciona os campos ao formulário
         $this->form->addFields([$id]);
         
         $row = $this->form->addFields(
@@ -89,7 +85,6 @@ class AppointmentForm extends TPage
             $this->form->validate();
             $data = $this->form->getData();
             
-            // Depuração: Verificar se o campo está vindo preenchido
             if (empty($data->professional_id)) {
                 throw new Exception('O campo "Profissional" é obrigatório.');
             }

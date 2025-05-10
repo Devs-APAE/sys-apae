@@ -30,7 +30,7 @@ class ProfessionalList extends TPage
 
         $crm = new TEntry('crm');
         $crm->setMask('00000000-0/BR', true);
-        $crm->placeholder = "CRM";
+        $crm->placeholder = "00000000-0/BR";
 
         $phone = new TEntry('phone');
         $phone->placeholder = "Telefone";
@@ -38,32 +38,6 @@ class ProfessionalList extends TPage
         $email = new TEntry('email');
         $email->placeholder = "Email";
 
-        $zip_code = new TEntry('zip_code');
-        $zip_code->placeholder = "CEP";
-
-        $address = new TEntry('address');
-        $address->placeholder = "Endereço";
-
-        $number = new TEntry('number');
-        $number->placeholder = "Número";
-
-        $complement = new TEntry('complement');
-        $complement->placeholder = "Complemento";
-
-        $district = new TEntry('district');
-        $district->placeholder = "Bairro";
-
-        $city = new TEntry('city');
-        $city->placeholder = "Cidade";
-
-        $uf = new TEntry('uf');
-        $uf->placeholder = "Estado";
-        
-        $reference = new TEntry('reference');
-        $reference->placeholder = "Ponto de referência";
-        
-        $observation = new TEntry('observation');
-        $observation->placeholder = "Observação";
 
         $active = new TCombo('active');
         $active->addItems([ 'Y' => 'Sim', 'N' => 'Não' ]);
@@ -101,18 +75,8 @@ class ProfessionalList extends TPage
         $column_crm = new TDataGridColumn('crm', 'CRM', 'left');
         $column_phone = new TDataGridColumn('phone', 'Telefone', 'left');
         $column_email = new TDataGridColumn('email', 'Email', 'left');
-        $column_zip_code = new TDataGridColumn('zip_code', 'CEP', 'left');
-        $column_address = new TDataGridColumn('address', 'Endereço', 'left');
-        $column_number = new TDataGridColumn('number', 'Número', 'left');
-        $column_complement = new TDataGridColumn('complement', 'Complemento', 'left');
-        $column_district = new TDataGridColumn('district', 'Bairro', 'left');
-        $column_city = new TDataGridColumn('city', 'Cidade', 'left');
-        $column_uf = new TDataGridColumn('uf', 'Estado', 'left');
-        $column_reference = new TDataGridColumn('reference', 'Ponto de Referência', 'left');
-        $column_observation = new TDataGridColumn('observation', 'Observação', 'left');
-        $column_active = new TDataGridColumn('active', 'Ativo(a)', 'left');
-        $column_created_at = new TDataGridColumn('created_at', 'Cadastro feito em: ', 'center');
-        $column_updated_at = new TDataGridColumn('updated_at', 'Atualizado em: ', 'center');
+        $column_created_at = new TDataGridColumn('created_at', 'Cadastro', 'center');
+        $column_active = new TDataGridColumn('active', 'Ativo(a)', 'center');
 
 
         $this->datagrid->addColumn($column_id);
@@ -121,15 +85,6 @@ class ProfessionalList extends TPage
         $this->datagrid->addColumn($column_crm);
         $this->datagrid->addColumn($column_phone);
         $this->datagrid->addColumn($column_email);
-        $this->datagrid->addColumn($column_zip_code);
-        $this->datagrid->addColumn($column_address);
-        $this->datagrid->addColumn($column_number);
-        $this->datagrid->addColumn($column_complement);
-        $this->datagrid->addColumn($column_district);
-        $this->datagrid->addColumn($column_city);
-        $this->datagrid->addColumn($column_uf);
-        $this->datagrid->addColumn($column_reference);
-        $this->datagrid->addColumn($column_observation);
         $this->datagrid->addColumn($column_created_at);
         $this->datagrid->addColumn($column_active);
 

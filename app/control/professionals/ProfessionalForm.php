@@ -47,6 +47,7 @@ class ProfessionalForm extends TPage
 
         $crm = new TEntry('crm');
         $crm->setMask('00000000-0/BR', True);
+        $crm->placeholder = "00000000-0/BR";
         $crm->addValidation('CRM', new TRequiredValidator());
 
         $phone = new TEntry('phone');
