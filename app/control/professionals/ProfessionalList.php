@@ -237,7 +237,7 @@ class ProfessionalList extends TPage
 
     public static function onDelete($param)
     {
-        $action = new TAction(['PatientList', 'Delete']);
+        $action = new TAction(['ProfessionalList', 'Delete']);
         $action->setParameters($param);
 
         new TQuestion("<h5>Confirma a exclusão deste profissional?</h5><p>Essa ação é irreversível e todos os dados do profissional serão removidos permanentemente.</p>", $action);
@@ -261,8 +261,11 @@ class ProfessionalList extends TPage
             $pos_action = new TAction(['ProfessionalList', 'onReload']);
             new TMessage('info', "<h5>Registro excluído com sucesso!</h5>", $pos_action);
         } catch (Exception $e) {
-            new TMessage('error', $e->getMessage());
-            TTransaction::rollback();
+            if (str_contains($e->getMessage(), 'fk_appointments_professionals')) {
+                new TMessage('error', '<h5>Este profissional possui atendimentos cadastrados e não pode ser excluído.</h5>');
+            } else {
+                new TMessage('error', $e->getMessage());
+            }
         }
     }
 
