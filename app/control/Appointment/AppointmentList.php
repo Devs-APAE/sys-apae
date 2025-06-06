@@ -25,11 +25,15 @@ class AppointmentList extends TPage
         $appointment_type_id->setDefaultOption('Selecione');
 
         
-        $professional= new TDBUniqueSearch('professional_id', 'app', 'Professional', 'id', 'name');
+        $professional_id = new TDBUniqueSearch('professional_id', 'app', 'Professional', 'id', 'name');
+        $professional_id->setMinLength(1);  
+        $professional_id->setMask('{name} ({crm})');
+        $professional_id->addValidation('Profissional', new TRequiredValidator());
    
         $appointment_date = new TDate('appointment_date');
         $appointment_date->setMask('dd/mm/yyyy');
         $appointment_date->setDatabaseMask('yyyy-mm-dd');
+        $appointment_date->placeholder = "dd/mm/aaaa";
 
         /*$output_type = new TRadioGroup('output_type');
         $output_type->addItems(array('pdf'=>'PDF', 'xls' => 'XLS', 'html'=>'HTML'));
@@ -40,7 +44,7 @@ class AppointmentList extends TPage
         $row = $this->form->addFields(
             [new TLabel('Paciente'), $patient],
             [new TLabel('Tipo de Atendimento'), $appointment_type_id],
-            [new TLabel('Profissional'), $professional],
+            [new TLabel('Profissional'), $professional_id],
             [new TLabel('Data de Atendimento'), $appointment_date],
         );
         $row->layout = ['col-sm-4', 'col-sm-2', 'col-sm-3', 'col-sm-3'];
@@ -140,6 +144,7 @@ class AppointmentList extends TPage
         $this->onReload(['offset' => 0, 'first_page' => 1]);
     }
 
+
     public function onReload($param = NULL)
     {
         try {
@@ -171,6 +176,9 @@ class AppointmentList extends TPage
                     $this->datagrid->addItem($object);
                 }
             }
+
+            $data = TSession::getValue('AppointmentList' . '_filter_data');
+            $this->form->setData($data);
 
             $criteria->resetProperties();
             $count = $repository->count($criteria);
